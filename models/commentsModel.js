@@ -1,38 +1,24 @@
 const { DataTypes } = require('sequelize');
-const sequelize = require('./index');
-const { User } = require('./usersModel');
+const sequelize = require('../database');
+const User = require('../models/usersModel');
 
 const Comment = sequelize.define('Comment', {
-    id: {
-        type: DataTypes.INTEGER,
-        autoIncrement: true,
-        primaryKey: true
-    },
-    text_comment: {
-        type: DataTypes.TEXT,
+    content: {
+        type: DataTypes.STRING,
         allowNull: false
     },
+    id_users: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+            model: 'Users',
+            key: 'id'
+        }
+    }
 }, {
-    tableName: 'comments',
-    timestamps: false,
+    timestamps: false 
 });
 
+Comment.belongsTo(User, { foreignKey: 'id_users' });
 
-
-const createComment = async (commentData) => {
-    return await Comment.create(commentData);
-};
-
-const getComments = async () => {
-    return await Comment.findAll();
-};
-
-Comment.belongsTo(User, {
-    foreignKey: 'id_user',
-})
-
-module.exports = {
-    Comment,
-    createComment,
-    getComments,
-};
+module.exports = Comment;

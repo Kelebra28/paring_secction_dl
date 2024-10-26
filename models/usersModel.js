@@ -1,36 +1,18 @@
 const { DataTypes } = require('sequelize');
-const sequelize = require('./index');
+const sequelize = require('../database');
 
 const User = sequelize.define('User', {
-    id: {
-        type: DataTypes.INTEGER,
-        autoIncrement: true,
-        primaryKey: true
-    },
-    email: {
-        type: DataTypes.STRING(45),
+    username: {
+        type: DataTypes.STRING,
         allowNull: false
     },
+    email: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        unique: true
+    }
 }, {
-    tableName: 'users',
-    timestamps: false,
+    timestamps: false 
 });
 
-User.hasMany(Comment, {
-    foreignKey: 'id_users',
-})
-
-
-const createUser = async (userData) => {
-    return await User.create(userData);
-};
-
-const getAllUsers = async () => {
-    return await User.findAll();
-};
-
-module.exports = {
-    User,
-    createUser,
-    getAllUsers,
-};
+module.exports = User;

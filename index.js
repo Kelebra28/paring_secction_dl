@@ -1,29 +1,22 @@
-const express = require('express');
-const db = require('./database');
 const cors = require('cors');
-const { userRoutes } = require('./routers');
-require('dotenv').config();
-
+const express = require('express');
 const app = express();
-const port = process.env.PORT || 3001;
+const commentRoutes = require('./routers/commentRoutes');
+const sequelize = require('./database'); 
 
 app.use(express.json());
 app.use(cors());
+app.use('/api', commentRoutes);
 
-app.get('/', (req, res) => res.send('Home'));
+sequelize.sync()
+    .then(() => {
+        console.log('Database & tables created!');
+    })
+    .catch(err => {
+        console.error('Unable to connect to the database:', err);
+    });
 
-app.use('/api', userRoutes);
-
-(async () => {
-    try {
-        await db.getConnection();
-        console.log('-----> Connected to database <-----');
-    } catch (error) {
-        console.error('Failed to connect to database:', error);
-        process.exit(1);
-    }
-})();
-
-app.listen(port, () => {
-    console.log(`Server is running on port ${port}`);
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
 });
